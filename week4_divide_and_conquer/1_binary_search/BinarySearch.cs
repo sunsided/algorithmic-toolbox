@@ -27,31 +27,32 @@ namespace Project
             Debug.Assert(end < values.Length, "end < values.Length");
             Debug.Assert(start <= end, "start <= end");
 
-            // Termination criteria
-            if (query == values[start]) return start;
-            if (query == values[end]) return end;
-            if (query < values[start]) return -1;
-            if (query > values[end]) return -1;
-            if (start == end)
+            while (true)
             {
-                if (values[start] == query) return start;
-                return -1;
+                // Termination criteria
+                if (query == values[start]) return start;
+                if (query == values[end]) return end;
+                if (query < values[start]) return -1;
+                if (query > values[end]) return -1;
+                if (start == end)
+                {
+                    if (values[start] == query) return start;
+                    return -1;
+                }
+
+                // Partition and call recursively
+                var pivotIndex = (start + end) / 2;
+                var pivot = values[pivotIndex];
+                if (query == pivot) return pivotIndex;
+                if (query < pivot)
+                {
+                    end = pivotIndex;
+                }
+                else
+                {
+                    start = pivotIndex + 1;
+                }
             }
-            
-            // Partition and call recursively
-            var pivotIndex = (start + end) / 2;
-            var pivot = values[pivotIndex];
-            if (query == pivot) return pivotIndex;
-            if (query < pivot)
-            {
-                end = pivotIndex;
-            }
-            else
-            {
-                start = pivotIndex + 1;
-            }
-            
-             return BinarySearch(query, values, start, end);
         }
 
         private static void ParseInputs(out int[] values, out int[] queries)

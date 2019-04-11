@@ -9,7 +9,7 @@ namespace ImprovingQuicksort
     internal static class Program
     {
         private static readonly Random Random = new Random(1);
-        
+
         // ReSharper disable once UnusedParameter.Local
         private static void Main(string[] args)
         {
@@ -42,36 +42,36 @@ namespace ImprovingQuicksort
         /// <returns>The new right and left indices.</returns>
         private static int[] Partition3(int[] a, int left, int right, int pivotIndex) {
             Swap(a, left, pivotIndex);
-            
+
             var pivot = a[left];
             var pivotLeftIndex = left;
             var pivotRightIndex = left;
-            
+
             // First we do a 2-way partitioning step where we move all items greater than or equal
             // to the element of interest to the right of the pivot.
             // Since the pivot is at 'left' initially, we start one element after that.
             for (var i = left + 1; i <= right; ++i)
             {
                 if (a[i] > pivot) continue;
-                
+
                 ++pivotRightIndex;
                 Swap(a, i, pivotRightIndex);
             }
-            
+
             // Next, we subdivide the partitioned space left of the pivot and
             // re-partition it such that all elements strictly less than the pivot
             // are ordered to the left of the pivot.
             for (var i = left + 1; i <= pivotRightIndex; ++i)
             {
                 if (a[i] >= pivot) continue;
-                
+
                 ++pivotLeftIndex;
                 Swap(a, i, pivotLeftIndex);
             }
-            
+
             // Move the pivot item from a[left] to its new location at the (new) pivot index, a[pivotIndex].
             Swap(a, left, pivotLeftIndex);
-            
+
             // return new []{m1, m2};
             return new[] {pivotLeftIndex, pivotRightIndex};
         }
@@ -94,10 +94,10 @@ namespace ImprovingQuicksort
         private static int Partition2(int[] a, int left, int right, int pivotIndex)
         {
             Swap(a, left, pivotIndex);
-            
+
             var pivot = a[left];
             pivotIndex = left;
-            
+
             // Since the pivot is at 'left', we start one element after that.
             for (var i = left + 1; i <= right; ++i)
             {
@@ -119,13 +119,13 @@ namespace ImprovingQuicksort
             {
                 return;
             }
-            
+
             // Select a randomly chosen pivot element and swap it with the first
             // element in the sublist.
-            
+
             //var k = Random.Next(r - l + 1) + l;
             var k = IndexOfMedianOfThree(a, l, (l + r) / 2, r);
-            
+
             // Partition the list between the left and right indices
             // such that every element left of the partition is smaller than the pivot element.
 #if PARTITION3
@@ -133,7 +133,7 @@ namespace ImprovingQuicksort
 
             // Descend into left branch.
             RandomizedQuickSort(a, l, m[0] - 1);
-            
+
             // Descend into right branch.
             RandomizedQuickSort(a, m[1] + 1, r);
 #else
@@ -141,7 +141,7 @@ namespace ImprovingQuicksort
 
             // Descend into left branch.
             RandomizedQuickSort(a, l, m - 1);
-            
+
             // Descend into right branch.
             RandomizedQuickSort(a, m + 1, r);
 #endif
@@ -150,17 +150,18 @@ namespace ImprovingQuicksort
         private static void Swap<T>(T array, int left, int right)
             where T: IList<int>
         {
+            if (left == right) return;
             var t = array[left];
             array[left] = array[right];
             array[right] = t;
         }
-        
+
         private static int IndexOfMedianOfThree<T>(T array, int a, int b, int c)
             where T: IReadOnlyList<int>
         {
             Debug.Assert(a <= b, "a < b");
             Debug.Assert(b <= c, "a < b");
-            
+
             var va = array[a];
             var vb = array[b];
             var vc = array[c];
@@ -169,7 +170,7 @@ namespace ImprovingQuicksort
             {
                 return Random.Next(a, c + 1);
             }
-            
+
             if ((va > vb) != (va > vc))
             {
                 return a;
@@ -182,18 +183,18 @@ namespace ImprovingQuicksort
 
             return c;
         }
-        
+
         private static void ParseInputs(out int[] values)
         {
             var input = Console.ReadLine();
             Debug.Assert(input != null, "input != null");
             var n = int.Parse(input);
-            
+
             // values to search in
             input = Console.ReadLine();
             Debug.Assert(input != null, "input != null");
             var inputs = input.Split();
-            
+
             values = new int[n];
             for (var i = 0; i < n; ++i)
             {

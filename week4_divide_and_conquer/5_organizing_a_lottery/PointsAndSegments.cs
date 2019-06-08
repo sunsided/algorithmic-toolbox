@@ -181,7 +181,7 @@ namespace PointsAndSegments
                     }
                     else
                     {
-                        // As discussed, tthe end time needs to be shifted by 1.
+                        // As discussed, the end time needs to be shifted by 1.
                         deltaTime = ends[endsCount - 1] + 1;
                         deltaValue = -1;
                         ends.RemoveAt(endsCount - 1);

@@ -18,9 +18,11 @@
     <ItemGroup>
         <None Remove="**/*" />
     </ItemGroup>
-    
-    <PropertyGroup Condition="$(Configuration) == 'Testing'">
+
+    <PropertyGroup Condition=" '$(Configuration)' == 'Testing' ">
         <DefineConstants>$(DefineConstants);TESTING;DEBUG</DefineConstants>
+        <ConfigurationGroup>Debug</ConfigurationGroup>
+        <DebugSymbols>true</DebugSymbols>
     </PropertyGroup>
-    
+
 </Project>

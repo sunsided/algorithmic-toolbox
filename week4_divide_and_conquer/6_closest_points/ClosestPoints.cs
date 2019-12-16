@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 
 namespace ClosestPoints
 {
@@ -10,53 +11,104 @@ namespace ClosestPoints
         private static void Main(string[] args)
         {
 #if TESTING
-            /*
-            var points = new List<Point>
+
+            var seedGenerator = new Random();
+            var seed = seedGenerator.Next();
+
+            var testIndex = -1;
+            foreach (var testCase in TestCases)
             {
-                P(4, 4),
-                P(-2, -2),
-                P(-3, -4),
-                P(-1, 3),
-                P(2, 3),
-                P(-4, 0),
-                P(1, 1),
-                P(-1, -1),
-                P(3, -1),
-                P(-4, 2),
-                P(-2, 4)
-            };
-            */
-            
-            var points = new List<Point>
-            {
-                P(7, 7),
-                P(1, 100),
-                P(-2, 100),
-                P(4, 8),
-                P(7, 7),
-                P(8, 8),
-                P(996, -100),
-                P(1000, -100),
-            };
+                ++testIndex;
+                for (var retry = 0; retry < 5; ++retry)
+                {
+                    var shouldShuffle = retry > 0;
+
+                    // After the first round, shuffle the list.
+                    var inputData = testCase.Points.ToList();
+                    if (shouldShuffle) Shuffle(inputData, ++seed);
+
+                    // We make a copy of the data here, as the solution is going to re-order the list internally.
+                    var testData = inputData.ToList();
+
+                    // Run the solution
+                    var fastSolution = double.NaN;
+                    try
+                    {
+                        fastSolution = FastSolution(testData);
+                        if (fastSolution == testCase.ExpectedDistance) continue;
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine(e);
+                    }
+
+                    // Print the error.
+                    if (shouldShuffle)
+                    {
+                        Console.WriteLine("Variation of test {0} with seed {1} (retry #{2})", testIndex, seed, retry);
+                    }
+                    else
+                    {
+                        Console.WriteLine("Variation of test {0}", testIndex);
+                    }
+
+                    Console.WriteLine("Expected distance {0:#0.0000}, but got {1:#0.0000}",
+                        testCase.ExpectedDistance, fastSolution);
+                    Console.WriteLine("Data:");
+                    foreach (var point in inputData)
+                    {
+                        Console.WriteLine("{0},", point);
+                    }
+                    return;
+                }
+            }
+            Console.WriteLine("All tests OK.");
 #else
             List<Point> points;
             ParseInputs(out points);
-#endif
             var solution = FastSolution(points);
             Console.WriteLine("{0:#0.0000}", solution);
+#endif
+        }
+
+        private static double SlowSolution(List<Point> points)
+        {
+            Debug.Assert(points.Count >= 2, "points.Count >= 2");
+            var distanceSq = double.MaxValue;
+            for (var x = 0; x < points.Count - 1; ++x)
+            {
+                var pt = points[x];
+                for (var y = x + 1; y < points.Count; ++y)
+                {
+                    var localDistance = points[y].DistanceSq(ref pt);
+                    if (localDistance < 0 || (localDistance == 0 && !points[0].Equals(points[1]))) Debugger.Break();
+                    Debug.Assert(localDistance >= 0,
+                        string.Format("{0}.DistanceSq({1}) == {2}", points[0], points[1], localDistance));
+
+                    distanceSq = Math.Min(distanceSq, localDistance);
+                }
+            }
+
+            return Math.Sqrt(distanceSq);
         }
 
         private static double FastSolution(List<Point> points)
         {
-            Debug.Assert(points.Count > 2, "points.Count > 2");
-            points.Sort();
+            Debug.Assert(points.Count >= 2, "points.Count >= 2");
+            if (points.Count == 2)
+            {
+                return Math.Sqrt(points[0].DistanceSq(points[1]));
+            }
 
-            var squaredDist = SplitAndMeasure(points, 0, points.Count - 1);
+            var squaredDist = SplitAndMeasureSq(points, 0, points.Count - 1);
             return Math.Sqrt(squaredDist);
         }
 
-        private static double SplitAndMeasure(List<Point> points, int startIndex, int endIndex)
+        private static double SplitAndMeasureSq(List<Point> points, int startIndex, int endIndex, int depth = 0)
         {
+            // First, we apply a sort to order the points according to their X coordinate.
+            points.Sort(startIndex, endIndex - startIndex + 1, PointXComparer.Default);
+
             var count = endIndex - startIndex + 1;
             Debug.Assert(count >= 2, "count >= 2");
 
@@ -79,61 +131,69 @@ namespace ClosestPoints
             }
 
             var medianIdx = (startIndex + endIndex) / 2;
-            var leftDistance = SplitAndMeasure(points, startIndex, medianIdx);
-            var rightDistance = SplitAndMeasure(points, medianIdx + 1, endIndex);
-            var distance = Math.Min(leftDistance, rightDistance);
-
-            return distance;
-        }
-        
-        private static Point P(int x, int y) => new Point(x, y);
-        
-        [DebuggerDisplay("({X}, {Y})")]
-        private struct Point : IEquatable<Point>, IComparable<Point>
-        {
-            public readonly int X;
-            public readonly int Y;
-
-            public Point(int x, int y)
+            var leftDistance = SplitAndMeasureSq(points, startIndex, medianIdx, depth + 1);
+            var rightDistance = SplitAndMeasureSq(points, medianIdx + 1, endIndex, depth + 1);
+            var distanceSq = Math.Min(leftDistance, rightDistance);
+            if (distanceSq <= 0)
             {
-                X = x;
-                Y = y;
+                return 0;
             }
 
-            public bool Equals(Point other)
-            {
-                return X == other.X && Y == other.Y;
-            }
+            // Next, we need to restore the sorting.
+            points.Sort(startIndex, endIndex - startIndex + 1, PointXComparer.Default);
 
-            public override bool Equals(object obj)
-            {
-                if (ReferenceEquals(null, obj)) return false;
-                return obj is Point && Equals((Point) obj);
-            }
+            // Now, we're going to select all items that are less than or equal to distance
+            // units away from the split, in both of the splits.
+            var medianX = points[medianIdx].X;
+            var distance = Math.Sqrt(distanceSq);
+            var lowerBound = medianX - distance;
+            var upperBound = medianX + distance;
+            var leftSplit = points.BinarySearch(new Point((int) Math.Round(lowerBound, MidpointRounding.AwayFromZero), 0), PointXComparer.Default);
+            var rightSplit = points.BinarySearch(new Point((int) Math.Round(upperBound, MidpointRounding.AwayFromZero), 0), PointXComparer.Default);
 
-            public override int GetHashCode()
+            // Ensure we capture all the relevant points to the left.
+            if (leftSplit < 0)
             {
-                unchecked
+                leftSplit = ~leftSplit;
+            }
+            else
+            {
+                while (leftSplit > 0 && points[leftSplit - 1].X >= lowerBound)
                 {
-                    return (X * 397) ^ Y;
+                    --leftSplit;
                 }
             }
 
-            public double DistanceSq(Point point) => DistanceSq(ref point);
-            
-            public double DistanceSq(ref Point point)
+            // Ensure we capture all the relevant points to the right.
+            if (rightSplit < 0)
             {
-                var dx = X - point.X;
-                var dy = Y - point.Y;
-                return dx * dx + dy * dy;
+                rightSplit = ~rightSplit;
+            }
+            else
+            {
+                while (rightSplit < points.Count - 1 && points[rightSplit + 1].X <= upperBound)
+                {
+                    ++rightSplit;
+                }
             }
 
-            public int CompareTo(Point other)
+            var centerSplitCount = rightSplit - leftSplit + 1;
+            points.Sort(leftSplit, centerSplitCount, PointYComparer.Default);
+
+            // Compare each remaining point to its seven neighbors.
+            for (var i = leftSplit; i < rightSplit; ++i)
             {
-                var xComparison = X.CompareTo(other.X);
-                if (xComparison != 0) return xComparison;
-                return Y.CompareTo(other.Y);
+                for (var j = i + 1; j < Math.Min(i + 7, rightSplit + 1); ++j)
+                {
+                    var pointDistSq = points[i].DistanceSq(points[j]);
+                    if (pointDistSq < distanceSq)
+                    {
+                        distanceSq = pointDistSq;
+                    }
+                }
             }
+
+            return distanceSq;
         }
 
         private static void ParseInputs(out List<Point> points)
@@ -151,6 +211,226 @@ namespace ClosestPoints
                 var y = int.Parse(coordinates[1]);
                 points.Add(new Point(x, y));
             }
+        }
+
+        private static void Shuffle<T>(List<T> array, int seed)
+        {
+            var random = new Random(seed);
+            for (var i = array.Count; i > 1; --i)
+            {
+                var j = random.Next(i);
+                var tmp = array[j];
+                array[j] = array[i - 1];
+                array[i - 1] = tmp;
+            }
+        }
+
+        private static IEnumerable<TestCase> TestCases
+        {
+            get
+            {
+                yield return new TestCase(5.0,
+                    new List<Point>
+                    {
+                        P(0, 0),
+                        P(3, 4),
+                    });
+
+                yield return new TestCase(0.0,
+                    new List<Point>
+                    {
+                        P(7, 7),
+                        P(1, 100),
+                        P(4, 8),
+                        P(7, 7)
+                    });
+
+                yield return new TestCase(Math.Sqrt(2),
+                    new List<Point>
+                    {
+                        P(4, 4),
+                        P(-2, -2),
+                        P(-3, -4),
+                        P(-1, 3),
+                        P(2, 3),
+                        P(-4, 0),
+                        P(1, 1),
+                        P(-1, -1),
+                        P(3, -1),
+                        P(-4, 2),
+                        P(-2, 4)
+                    });
+
+                yield return new TestCase(0,
+                    new List<Point>
+                    {
+                        P(7, 7),
+                        P(1, 100),
+                        P(-2, 100),
+                        P(4, 8),
+
+                        P(7, 7),
+                        P(8, 6),
+                        P(996, -100),
+                        P(1000, -100),
+                    });
+
+                yield return new TestCase(0,
+                    new List<Point>
+                    {
+                        P(7, 7),
+                        P(1, 100),
+                        P(-2, 100),
+                        P(4, 8),
+
+                        P(7, 7),
+                        P(8, 6),
+                        P(996, -100),
+                    });
+
+                yield return new TestCase(0,
+                    new List<Point>
+                    {
+                        P(7, 7),
+                        P(1, 100),
+                        P(4, 8),
+
+                        P(7, 7),
+                        P(8, 6),
+                        P(996, -100),
+                        P(1000, -100),
+                    });
+
+                yield return new TestCase(1.0,
+                    new List<Point>
+                    {
+                        P(0, 0),
+                        P(1, 0),
+                        P(0, 1),
+                    });
+
+                yield return BuildTestCase(
+                    P(352247606, 637066663),
+                        P(479876756, 99421972),
+                        P(738143135, 839794419),
+                        P(1273023503, 1778884288),
+                        P(1470125282, 221910935),
+                        P(1532039334, 74070668)
+                    );
+
+                yield return BuildTestCase(
+                    P(407722186, 268780282),
+                    P(886914344, 976331384),
+                    P(963968123, 12240710),
+                    P(1136531059, 1269754387),
+                    P(1239061428, 1320294707),
+                    P(1442329418, 1787046623),
+                    P(1681668034, 681214485),
+                    P(1728612833, 379202077));
+
+                var rand = new Random();
+                for (var i = 0; i < 100; ++i)
+                {
+                    var count = rand.Next(2, 10);
+                    var points = Enumerable.Range(0, count).Select(_ => P(rand.Next(), rand.Next())).ToList();
+                    yield return BuildTestCase(points);
+                }
+            }
+        }
+
+        private static TestCase BuildTestCase(params Point[] points)
+        {
+            return BuildTestCase(points.ToList());
+        }
+
+        private static TestCase BuildTestCase(List<Point> points)
+        {
+            var expectedValue = SlowSolution(points);
+            if (double.IsNaN(expectedValue)) Debugger.Break();
+            Debug.Assert(!double.IsNaN(expectedValue), "double.IsNaN(expectedValue)");
+
+            return new TestCase(expectedValue, points);
+        }
+
+        private static Point P(int x, int y) => new Point(x, y);
+
+        [DebuggerDisplay("({X}, {Y})")]
+        private struct Point : IEquatable<Point>, IComparable<Point>
+        {
+            public readonly long X;
+            public readonly long Y;
+
+            public Point(int x, int y)
+            {
+                X = x;
+                Y = y;
+            }
+
+            public override string ToString()
+            {
+                return string.Format("P({0}, {1})", X, Y);
+            }
+
+            public bool Equals(Point other)
+            {
+                return X == other.X && Y == other.Y;
+            }
+
+            public override bool Equals(object obj)
+            {
+                if (ReferenceEquals(null, obj)) return false;
+                return obj is Point && Equals((Point) obj);
+            }
+
+            public override int GetHashCode()
+            {
+                unchecked
+                {
+                    return (int)((X * 397) ^ Y);
+                }
+            }
+
+            public double DistanceSq(Point point) => DistanceSq(ref point);
+
+            public double DistanceSq(ref Point point)
+            {
+                var dx = X - point.X;
+                var dy = Y - point.Y;
+                return dx * dx + dy * dy;
+            }
+
+            public int CompareTo(Point other)
+            {
+                var xComparison = X.CompareTo(other.X);
+                if (xComparison != 0) return xComparison;
+                return Y.CompareTo(other.Y);
+            }
+        }
+
+        private sealed class PointXComparer : IComparer<Point>
+        {
+            public static readonly PointXComparer Default = new PointXComparer();
+
+            public int Compare(Point x, Point y) => x.X.CompareTo(y.X);
+        }
+
+        private sealed class PointYComparer : IComparer<Point>
+        {
+            public static readonly PointYComparer Default = new PointYComparer();
+
+            public int Compare(Point x, Point y) => x.Y.CompareTo(y.Y);
+        }
+
+        private struct TestCase
+        {
+            public TestCase(double expectedDistance, List<Point> points)
+            {
+                ExpectedDistance = expectedDistance;
+                Points = points;
+            }
+
+            public double ExpectedDistance { get; }
+            public List<Point> Points { get; }
         }
     }
 }

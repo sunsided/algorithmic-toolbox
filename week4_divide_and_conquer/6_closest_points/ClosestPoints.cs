@@ -52,8 +52,7 @@ namespace ClosestPoints
                         Console.WriteLine("Variation of test {0}", testIndex);
                     }
 
-                    Console.WriteLine("Expected distance {0:#0.0000}, but got {1:#0.0000}",
-                        testCase.ExpectedDistance, fastSolution);
+                    Console.WriteLine("Expected distance {0:e}, but got {1:e}", testCase.ExpectedDistance, fastSolution);
                     Console.WriteLine("Data:");
                     foreach (var point in inputData)
                     {
@@ -81,7 +80,7 @@ namespace ClosestPoints
                 for (var y = x + 1; y < points.Count; ++y)
                 {
                     var localDistance = points[y].DistanceSq(ref pt);
-                    if (localDistance < 0 || (localDistance == 0 && !points[0].Equals(points[1]))) Debugger.Break();
+                    if (localDistance < 0 || (localDistance == 0 && !points[x].Equals(points[y]))) Debugger.Break();
                     Debug.Assert(localDistance >= 0,
                         string.Format("{0}.DistanceSq({1}) == {2}", points[0], points[1], localDistance));
 
@@ -95,11 +94,6 @@ namespace ClosestPoints
         private static double FastSolution(List<Point> points)
         {
             Debug.Assert(points.Count >= 2, "points.Count >= 2");
-            if (points.Count == 2)
-            {
-                return Math.Sqrt(points[0].DistanceSq(points[1]));
-            }
-
             var squaredDist = SplitAndMeasureSq(points, 0, points.Count - 1);
             return Math.Sqrt(squaredDist);
         }
@@ -126,6 +120,10 @@ namespace ClosestPoints
                 var dab = a.DistanceSq(ref b);
                 var dac = a.DistanceSq(ref c);
                 var dbc = b.DistanceSq(ref c);
+
+                Debug.Assert(!double.IsNaN(dab), "!double.IsNaN(dab)");
+                Debug.Assert(!double.IsNaN(dac), "!double.IsNaN(dac)");
+                Debug.Assert(!double.IsNaN(dbc), "!double.IsNaN(dbc)");
 
                 return Math.Min(dab, Math.Min(dac, dbc));
             }
@@ -177,7 +175,17 @@ namespace ClosestPoints
                 }
             }
 
-            var centerSplitCount = rightSplit - leftSplit + 1;
+            // Clamp the splits to their boundaries
+            leftSplit = Math.Max(startIndex, Math.Min(endIndex, leftSplit));
+            rightSplit = Math.Max(startIndex, Math.Min(endIndex, rightSplit));
+
+            if (leftSplit > rightSplit) throw new InvalidOperationException(string.Format("Asserted: leftSplit <= rightSplit | {0} < {1}", leftSplit, rightSplit));
+            var centerSplitCount = rightSplit - leftSplit;
+
+            if (centerSplitCount < 0) throw new InvalidOperationException(string.Format("Asserted: centerSplitCount >= 0 | {0}", centerSplitCount));
+            if (leftSplit + centerSplitCount >= points.Count) throw new InvalidOperationException(string.Format("Asserted: leftSplit + centerSplitCount < points.Count | {0} + {1} < {2}", leftSplit, centerSplitCount, points.Count));
+
+            // Sort the new segment.
             points.Sort(leftSplit, centerSplitCount, PointYComparer.Default);
 
             // Compare each remaining point to its seven neighbors.
@@ -229,6 +237,8 @@ namespace ClosestPoints
         {
             get
             {
+                #region Smoke Tests: Default Test Cases
+
                 yield return new TestCase(5.0,
                     new List<Point>
                     {
@@ -260,6 +270,10 @@ namespace ClosestPoints
                         P(-4, 2),
                         P(-2, 4)
                     });
+
+                #endregion Smoke Tests: Default Test Cases
+
+                #region Additional debugging cases
 
                 yield return new TestCase(0,
                     new List<Point>
@@ -309,6 +323,36 @@ namespace ClosestPoints
                         P(0, 1),
                     });
 
+                #endregion Additional debugging cases
+
+                #region Test cases known to fail
+
+                // Wrong result
+                yield return BuildTestCase(
+                    P(1716019236, 634084808),
+                    P(2008853278, 1985140336),
+                    P(181597531, 1807250292),
+                    P(1501650843, 1825584296)
+                );
+
+                // Exception
+                yield return BuildTestCase(
+                    P(1743536468, 258964953),
+                    P(736238120, 893362053),
+                    P(1768871663, 1909821817),
+                    P(813541575, 323035883),
+                    P(1576743814, 434067991)
+                );
+
+                // Exception
+                yield return BuildTestCase(
+                    P(1922919673, 76983070),
+                    P(308882645, 1505345705),
+                    P(2084262107, 1503548551),
+                    P(1047327236, 1723379800),
+                    P(2137082901, 1181371557)
+                );
+
                 yield return BuildTestCase(
                     P(352247606, 637066663),
                         P(479876756, 99421972),
@@ -328,13 +372,55 @@ namespace ClosestPoints
                     P(1681668034, 681214485),
                     P(1728612833, 379202077));
 
+                #endregion Test cases known to fail
+
+                #region Generated test cases
+
                 var rand = new Random();
+
+                for (var i = 0; i < 100; ++i)
+                {
+                    var count = rand.Next(2, 10);
+                    var points = Enumerable.Range(0, count).Select(_ => P(rand.Next(0, 100), rand.Next(0, 100))).ToList();
+                    yield return BuildTestCase(points);
+                }
+
+                for (var i = 0; i < 100; ++i)
+                {
+                    var count = rand.Next(2, 10);
+                    var points = Enumerable.Range(0, count).Select(_ => P(rand.Next(-100, 0), rand.Next(-100, 0))).ToList();
+                    yield return BuildTestCase(points);
+                }
+
+                for (var i = 0; i < 100; ++i)
+                {
+                    var count = rand.Next(2, 10);
+                    var points = Enumerable.Range(0, count).Select(_ => P(rand.Next(-100, 0), rand.Next(0, 100))).ToList();
+                    yield return BuildTestCase(points);
+                }
+
+                for (var i = 0; i < 100; ++i)
+                {
+                    var count = rand.Next(2, 10);
+                    var points = Enumerable.Range(0, count).Select(_ => P(rand.Next(0, 100), rand.Next(-100, 0))).ToList();
+                    yield return BuildTestCase(points);
+                }
+
+                for (var i = 0; i < 100; ++i)
+                {
+                    var count = rand.Next(2, 10);
+                    var points = Enumerable.Range(0, count).Select(_ => P(rand.Next(-100, 100), rand.Next(-100, 100))).ToList();
+                    yield return BuildTestCase(points);
+                }
+
                 for (var i = 0; i < 100; ++i)
                 {
                     var count = rand.Next(2, 10);
                     var points = Enumerable.Range(0, count).Select(_ => P(rand.Next(), rand.Next())).ToList();
                     yield return BuildTestCase(points);
                 }
+
+                #endregion Generated test cases
             }
         }
 
@@ -357,8 +443,8 @@ namespace ClosestPoints
         [DebuggerDisplay("({X}, {Y})")]
         private struct Point : IEquatable<Point>, IComparable<Point>
         {
-            public readonly long X;
-            public readonly long Y;
+            public readonly int X;
+            public readonly int Y;
 
             public Point(int x, int y)
             {
@@ -394,8 +480,8 @@ namespace ClosestPoints
 
             public double DistanceSq(ref Point point)
             {
-                var dx = X - point.X;
-                var dy = Y - point.Y;
+                double dx = X - point.X;
+                double dy = Y - point.Y;
                 return dx * dx + dy * dy;
             }
 

@@ -11,7 +11,19 @@ namespace ClosestPoints
         private static void Main(string[] args)
         {
 #if TESTING
+            if (!TestA()) return;
+            RunTests();
+#else
+            List<Point> points;
+            ParseInputs(out points);
+            var solution = FastSolution(points);
+            Console.WriteLine("{0:#0.0000}", solution);
+#endif
+        }
 
+        [Conditional("DEBUG")]
+        private static void RunTests()
+        {
             var seedGenerator = new Random();
             var seed = seedGenerator.Next();
 
@@ -42,32 +54,55 @@ namespace ClosestPoints
                         Console.WriteLine(e);
                     }
 
-                    // Print the error.
-                    if (shouldShuffle)
-                    {
-                        Console.WriteLine("Variation of test {0} with seed {1} (retry #{2})", testIndex, seed, retry);
-                    }
-                    else
-                    {
-                        Console.WriteLine("Variation of test {0}", testIndex);
-                    }
-
-                    Console.WriteLine("Expected distance {0:e}, but got {1:e}", testCase.ExpectedDistance, fastSolution);
-                    Console.WriteLine("Data:");
-                    foreach (var point in inputData)
-                    {
-                        Console.WriteLine("{0},", point);
-                    }
+                    PrintTestError(testCase, inputData, fastSolution);
                     return;
                 }
             }
+
             Console.WriteLine("All tests OK.");
-#else
-            List<Point> points;
-            ParseInputs(out points);
-            var solution = FastSolution(points);
-            Console.WriteLine("{0:#0.0000}", solution);
-#endif
+        }
+
+        private static bool TestA()
+        {
+            var testCase = BuildTestCase(
+                P(1716019236, 6),
+                P(2008853278, 1985140336),
+                P(1, 1),
+                P(1501650843, 1)
+            );
+
+            return RunTestAndReportOnFailure(testCase);
+        }
+
+        private static bool RunTestAndReportOnFailure(TestCase testCase)
+        {
+            var distance = double.NaN;
+            try
+            {
+                distance = FastSolution(testCase.Points.ToList());
+                if (distance == testCase.ExpectedDistance)
+                {
+                    Console.WriteLine("Test OK");
+                    return true;
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
+
+            PrintTestError(testCase, testCase.Points, distance);
+            return false;
+        }
+
+        private static void PrintTestError(TestCase testCase, List<Point> inputData, double solution)
+        {
+            Console.WriteLine("Expected distance {0:e}, but got {1:e}", testCase.ExpectedDistance, solution);
+            Console.WriteLine("Data:");
+            foreach (var point in inputData)
+            {
+                Console.WriteLine("{0},", point);
+            }
         }
 
         private static double SlowSolution(List<Point> points)
@@ -100,6 +135,8 @@ namespace ClosestPoints
 
         private static double SplitAndMeasureSq(List<Point> points, int startIndex, int endIndex, int depth = 0)
         {
+            // TODO: To debug, wrap this in a checked{} block!
+
             // First, we apply a sort to order the points according to their X coordinate.
             points.Sort(startIndex, endIndex - startIndex + 1, PointXComparer.Default);
 
@@ -146,9 +183,9 @@ namespace ClosestPoints
             var distance = Math.Sqrt(distanceSq);
             var lowerBound = medianX - distance;
             var upperBound = medianX + distance;
-            var leftSplit = points.BinarySearch(new Point((int) Math.Round(lowerBound, MidpointRounding.AwayFromZero), 0), PointXComparer.Default);
-            var rightSplit = points.BinarySearch(new Point((int) Math.Round(upperBound, MidpointRounding.AwayFromZero), 0), PointXComparer.Default);
 
+            // It is crucial to cast to _long_ here, as a cast to _int_ may underflow.
+            var leftSplit = points.BinarySearch(new Point((long) Math.Round(lowerBound, MidpointRounding.AwayFromZero), 0), PointXComparer.Default);
             // Ensure we capture all the relevant points to the left.
             if (leftSplit < 0)
             {
@@ -162,9 +199,12 @@ namespace ClosestPoints
                 }
             }
 
+            // It is crucial to cast to _long_ here, as a cast to _int_ may overflow.
+            var rightSplit = points.BinarySearch(new Point((long) Math.Round(upperBound, MidpointRounding.AwayFromZero), 0), PointXComparer.Default);
             // Ensure we capture all the relevant points to the right.
             if (rightSplit < 0)
             {
+                // We increase one here in order to land "on" the item
                 rightSplit = ~rightSplit;
             }
             else
@@ -329,10 +369,10 @@ namespace ClosestPoints
 
                 // Wrong result
                 yield return BuildTestCase(
-                    P(1716019236, 634084808),
+                    P(1716019236, 6),
                     P(2008853278, 1985140336),
-                    P(181597531, 1807250292),
-                    P(1501650843, 1825584296)
+                    P(1, 1),
+                    P(1501650843, 1)
                 );
 
                 // Exception
@@ -443,10 +483,10 @@ namespace ClosestPoints
         [DebuggerDisplay("({X}, {Y})")]
         private struct Point : IEquatable<Point>, IComparable<Point>
         {
-            public readonly int X;
-            public readonly int Y;
+            public readonly long X;
+            public readonly long Y;
 
-            public Point(int x, int y)
+            public Point(long x, long y)
             {
                 X = x;
                 Y = y;

@@ -1,0 +1,26 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <TargetFramework>netcoreapp2.2</TargetFramework>
+        <LangVersion>6.0</LangVersion>
+    </PropertyGroup>
+    
+    <PropertyGroup>
+        <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    </PropertyGroup>
+    
+    <PropertyGroup>
+        <Configurations>Testing;Debug;Release</Configurations>
+        <Platforms>AnyCPU</Platforms>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <None Remove="**/*" />
+    </ItemGroup>
+    
+    <PropertyGroup Condition="$(Configuration) == 'Testing'">
+        <DefineConstants>$(DefineConstants);TESTING;DEBUG;TRACE</DefineConstants>
+    </PropertyGroup>
+    
+</Project>

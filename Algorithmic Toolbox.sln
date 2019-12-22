@@ -82,6 +82,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Week 5.2 - Primitive Calcul
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Week 5.3 - Edit Distance", "week5_dynamic_programming1\3_edit_distance\Week 5.3 - Edit Distance.csproj", "{589167FC-C797-45F8-AC9F-093EC8397752}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Week 5.4 - Longest Common Subsequence", "week5_dynamic_programming1\4_longest_common_subsequence_of_two_sequences\Week 5.4 - Longest Common Subsequence.csproj", "{D1613083-E923-4410-A95D-710ACD59EBFA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -115,6 +117,7 @@ Global
 		{168E5A04-F78E-4C98-99D5-1B0EC63B661D} = {77E8B0A0-EEB1-4C1A-A159-E1D3B03D6188}
 		{5315666D-F77C-4F1D-BBD6-4865459FB6B6} = {77E8B0A0-EEB1-4C1A-A159-E1D3B03D6188}
 		{589167FC-C797-45F8-AC9F-093EC8397752} = {77E8B0A0-EEB1-4C1A-A159-E1D3B03D6188}
+		{D1613083-E923-4410-A95D-710ACD59EBFA} = {77E8B0A0-EEB1-4C1A-A159-E1D3B03D6188}
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{D8CD5AE2-C342-4AF7-B644-1CD800544E13}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -273,5 +276,11 @@ Global
 		{589167FC-C797-45F8-AC9F-093EC8397752}.Release|Any CPU.Build.0 = Release|Any CPU
 		{589167FC-C797-45F8-AC9F-093EC8397752}.Testing|Any CPU.ActiveCfg = Testing|Any CPU
 		{589167FC-C797-45F8-AC9F-093EC8397752}.Testing|Any CPU.Build.0 = Testing|Any CPU
+		{D1613083-E923-4410-A95D-710ACD59EBFA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D1613083-E923-4410-A95D-710ACD59EBFA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D1613083-E923-4410-A95D-710ACD59EBFA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D1613083-E923-4410-A95D-710ACD59EBFA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D1613083-E923-4410-A95D-710ACD59EBFA}.Testing|Any CPU.ActiveCfg = Testing|Any CPU
+		{D1613083-E923-4410-A95D-710ACD59EBFA}.Testing|Any CPU.Build.0 = Testing|Any CPU
 	EndGlobalSection
 EndGlobal

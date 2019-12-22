@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project>
+
+  <!-- https://docs.microsoft.com/de-de/visualstudio/msbuild/customize-your-build?view=vs-2019 -->
+
+  <PropertyGroup>
+    <LangVersion>6.0</LangVersion>
+    <RepositoryType>git</RepositoryType>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <Configurations>Testing;Debug;Release</Configurations>
+    <Platforms>AnyCPU</Platforms>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="$(Configuration) == 'Testing'">
+    <DefineConstants>$(DefineConstants);TESTING;DEBUG</DefineConstants>
+    <ConfigurationGroup>Debug</ConfigurationGroup>
+    <DebugSymbols>true</DebugSymbols>
+  </PropertyGroup>
+
+</Project>

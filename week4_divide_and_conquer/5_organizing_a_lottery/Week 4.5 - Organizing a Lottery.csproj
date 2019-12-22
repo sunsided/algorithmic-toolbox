@@ -4,6 +4,7 @@
         <OutputType>Exe</OutputType>
         <TargetFramework>netcoreapp2.2</TargetFramework>
         <LangVersion>6.0</LangVersion>
+        <RootNamespace>PointsAndSegments</RootNamespace>
     </PropertyGroup>
     
     <PropertyGroup>
@@ -20,7 +21,7 @@
     </ItemGroup>
     
     <PropertyGroup Condition="$(Configuration) == 'Testing'">
-        <DefineConstants>$(DefineConstants);TESTING</DefineConstants>
+        <DefineConstants>$(DefineConstants);TESTING;DEBUG;TRACE</DefineConstants>
     </PropertyGroup>
     
 </Project>

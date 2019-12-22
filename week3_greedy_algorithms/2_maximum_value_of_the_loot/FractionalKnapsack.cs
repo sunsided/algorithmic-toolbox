@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 
-namespace project
+namespace Week3.MaximumValueOfTheLoot
 {
     internal static class Program
     {
@@ -16,7 +16,7 @@ namespace project
             var solution = FastSolution(n, w, values, weights);
             Console.WriteLine(solution);
         }
-        
+
         private static double FastSolution(int n, int w, IReadOnlyList<int> values, IReadOnlyList<int> weights)
         {
             var items = new Item[n];
@@ -45,7 +45,7 @@ namespace project
                 totalValue += item.Value * ((double)w / item.Amount);
                 break;
             }
-            
+
             return totalValue;
         }
 

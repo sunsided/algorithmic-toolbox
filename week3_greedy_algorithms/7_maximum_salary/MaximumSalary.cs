@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 
-namespace Project
+namespace Week3.MaximumSalary
 {
     internal static class Program
     {
@@ -35,7 +35,7 @@ namespace Project
             var input = Console.ReadLine();
             Debug.Assert(input != null, "input != null");
             var n = int.Parse(input.Trim());
-            
+
             input = Console.ReadLine();
             Debug.Assert(input != null, "input != null");
             var split = input.Split();

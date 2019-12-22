@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 
-namespace ImprovingQuicksort
+namespace Week4.NumberOfInversions
 {
     internal static class Program
     {
@@ -28,7 +28,7 @@ namespace ImprovingQuicksort
             Debug.Assert(values.Zip(values.Skip(1), (a, b) => a <= b).All(x => x));
             return result;
         }
-        
+
         private static int MergeSort(int[] values, int left, int right)
         {
             if (left >= right)
@@ -43,10 +43,10 @@ namespace ImprovingQuicksort
 
             var l = left;
             var r = pivotIndex + 1;
-            
+
             var i = 0;
             var newList = new int[right - left + 1];
-            
+
             while (l <= pivotIndex && r <= right)
             {
                 if (values[l] <= values[r])
@@ -64,12 +64,12 @@ namespace ImprovingQuicksort
             {
                 newList[i++] = values[l++];
             }
-            
+
             while (r <= right)
             {
                 newList[i++] = values[r++];
             }
-            
+
             Array.Copy(newList, 0, values, left, newList.Length);
 
             return numInvMerge + numInvLeft + numInvRight;
@@ -85,24 +85,24 @@ namespace ImprovingQuicksort
             Debug.Assert(right >= 0, "right >= 0");
             Debug.Assert(left < values.Count, "left < values.Count");
             Debug.Assert(right < values.Count, "right < values.Count");
-            
+
             if (left == right) return;
             var t = values[left];
             values[left] = values[right];
             values[right] = t;
         }
-        
+
         private static void ParseInputs(out int[] values)
         {
             var input = Console.ReadLine();
             Debug.Assert(input != null, "input != null");
             var n = int.Parse(input);
-            
+
             // values to search in
             input = Console.ReadLine();
             Debug.Assert(input != null, "input != null");
             var inputs = input.Split();
-            
+
             values = new int[n];
             for (var i = 0; i < n; ++i)
             {

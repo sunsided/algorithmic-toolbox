@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 
-namespace ChangeDP
+namespace Week5.MoneyChangeAgain
 {
     internal static class Program
     {

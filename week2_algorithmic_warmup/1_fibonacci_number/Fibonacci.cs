@@ -1,7 +1,7 @@
 using System;
 using System.Diagnostics;
 
-namespace project
+namespace Week2.FibonacciNumber
 {
     internal static class Program
     {
@@ -16,7 +16,7 @@ namespace project
             while (true)
             {
                 var n = random.Next() % (maxInputs - minInputs + 1) + minInputs;
-                
+
                 // Compare solutions
                 var naive = NaiveSolution(n);
                 var faster = FastSolution(n);
@@ -25,7 +25,7 @@ namespace project
                     Console.Write(".");
                     continue;
                 };
-                
+
                 Console.WriteLine();
                 Console.Error.WriteLine("FAIL at n={0}", n);
                 Console.Error.WriteLine("Naive: {0}, Faster: {1}", naive, faster);
@@ -40,7 +40,7 @@ namespace project
         }
 
 #if TESTING
-        
+
         private static long NaiveSolution(int n)
         {
             if (n <= 1) return n;
@@ -52,7 +52,7 @@ namespace project
         private static long FastSolution(int n)
         {
             if (n <= 1) return n;
-            
+
             var close = 1L;
             var far = 0L;
             for (var i = 0; i < (n-1); ++i)

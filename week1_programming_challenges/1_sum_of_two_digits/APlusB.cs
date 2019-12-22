@@ -1,6 +1,6 @@
 using System;
 
-namespace APlusB
+namespace Week1.APlusB
 {
     internal static class Program
     {

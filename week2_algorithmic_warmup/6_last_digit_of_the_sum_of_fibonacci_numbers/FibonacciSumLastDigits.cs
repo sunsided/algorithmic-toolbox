@@ -1,7 +1,7 @@
 using System;
 using System.Diagnostics;
 
-namespace project
+namespace Week2.LastDigitOfSumOfFibonacciNumbers
 {
     internal static class Program
     {
@@ -16,7 +16,7 @@ namespace project
             while (true)
             {
                 var n = random.Next() % (maxInputs - minInputs + 1) + minInputs;
-                
+
                 // Compare solutions
                 var naive = NaiveSolution(n);
                 var faster = FastSolution(n);
@@ -25,7 +25,7 @@ namespace project
                     Console.Write(".");
                     continue;
                 };
-                
+
                 Console.WriteLine();
                 Console.Error.WriteLine("FAIL at n={0}", n);
                 Console.Error.WriteLine("Naive: {0}, Faster: {1}", naive, faster);
@@ -41,7 +41,7 @@ namespace project
         }
 
 #if TESTING
-        
+
         private static int NaiveSolution(long n)
         {
             if (n <= 1) return (int)n;
@@ -54,7 +54,7 @@ namespace project
                 var @new = close + far;
                 far = close;
                 close = @new % 10;
-                
+
                 // The key to this solution is again that the last digit is always
                 // changing fastest, so using a modulo-10 on the values to keep them small
                 // will always result in the correct last digit.
@@ -65,7 +65,7 @@ namespace project
         }
 
 #endif
-        
+
         private static int FastSolution(long n)
         {
             // We make use of F(n) = F(n+2) - F(1). However, this is infeasible for large inputs.
@@ -89,12 +89,12 @@ namespace project
             // We additionally take mod 10 since we only need the last digit anyway.
             Debug.Assert(modulo % 10 == 0, "modulo % 10 == 0");
             if (n <= 1) return (int)n;
-            
+
             var even = (n & 1) == 0;
             if (even)
             {
                 var k = n / 2;
-                
+
                 var fibKm1 = FastFibonacciRecursiveModulo(k - 1, modulo);
                 var fibK = FastFibonacciRecursiveModulo(k, modulo);
                 return (2 * fibKm1 + fibK) * fibK % modulo;
@@ -109,13 +109,13 @@ namespace project
         }
 
 #if !TESTING
-        
+
         private static void ParseInputs(out long n)
         {
             // Read number of inputs
             var input = Console.ReadLine();
             Debug.Assert(input != null, "input != null");
-            var values = input.Split(); 
+            var values = input.Split();
             n = long.Parse(values[0]);
         }
 

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 
-namespace ClosestPoints
+namespace Week4.ClosestPoints
 {
     internal static class Program
     {
@@ -21,7 +21,7 @@ namespace ClosestPoints
 #endif
         }
 
-        [Conditional("DEBUG")]
+        [Conditional("TESTING")]
         private static void RunTests()
         {
             var seedGenerator = new Random();
@@ -95,6 +95,7 @@ namespace ClosestPoints
             return false;
         }
 
+        [Conditional("TESTING")]
         private static void PrintTestError(TestCase testCase, List<Point> inputData, double solution)
         {
             Console.WriteLine("Expected distance {0:e}, but got {1:e}", testCase.ExpectedDistance, solution);

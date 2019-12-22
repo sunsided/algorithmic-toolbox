@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 
-namespace project
+namespace Week2.FibonacciNumberAgain
 {
     internal static class Program
     {
@@ -35,7 +35,7 @@ namespace project
             foreach (var value in FibonacciSequence(n, m))
             {
                 ++length;
-                
+
                 // We're using avery simple heuristic here to stop the enumeration.
                 // According to Wikipedia, the Pisano sequence always starts with 0, 1 (concretely, it is
                 // the Fibonacci sequence for the first m numbers).
@@ -80,7 +80,7 @@ namespace project
             // Read number of inputs
             var input = Console.ReadLine();
             Debug.Assert(input != null, "input != null");
-            var values = input.Split(); 
+            var values = input.Split();
             n = long.Parse(values[0]);
             m = int.Parse(values[1]);
         }

@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 
-namespace EditDistance
+namespace Week5.EditDistance
 {
     internal static class Program
     {

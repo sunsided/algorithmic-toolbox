@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 
-namespace Project
+namespace Week3.CarFueling
 {
     internal static class Program
     {
@@ -15,7 +15,7 @@ namespace Project
             var solution = FastSolution(cityDistance, fuelCapacity, stopDistances);
             Console.WriteLine(solution);
         }
-        
+
         private static double FastSolution(int cityDistance, int fuelCapacity, IReadOnlyList<int> stopDistances)
         {
             // If there is no stop in between the cities we can either directly reach the goal
@@ -28,9 +28,9 @@ namespace Project
             var distances = new List<int>(stopDistances.Count + 2) {0};
             distances.AddRange(stopDistances);
             distances.Add(cityDistance);
-           
+
             var finalPosition = stopDistances.Count + 1;
-           
+
             var currentPosition = 0;
             var numStops = 0;
             while (currentPosition < distances.Count)
@@ -49,7 +49,7 @@ namespace Project
                 {
                     return -1;
                 }
-                
+
                 // If we reached the final position, we have refilled often enough.
                 if (reachablePosition == finalPosition)
                 {
@@ -64,7 +64,7 @@ namespace Project
                     currentPosition = reachablePosition;
                 }
             }
-            
+
             return numStops;
         }
 
@@ -72,11 +72,11 @@ namespace Project
             var input = Console.ReadLine();
             Debug.Assert(input != null, "input != null");
             distance = int.Parse(input.Trim());
-            
+
             input = Console.ReadLine();
             Debug.Assert(input != null, "input != null");
             fuelCapacity = int.Parse(input.Trim());
-            
+
             input = Console.ReadLine();
             Debug.Assert(input != null, "input != null");
             var n = int.Parse(input.Trim());
@@ -84,7 +84,7 @@ namespace Project
             input = Console.ReadLine();
             Debug.Assert(input != null, "input != null");
             var values = input.Split();
-            
+
             stopDistances = new int[n];
             for (var i = 0; i < n; ++i)
             {

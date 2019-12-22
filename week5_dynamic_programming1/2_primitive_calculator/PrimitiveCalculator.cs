@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 
-namespace ChangeDP
+namespace Week5.PrimitiveCalculator
 {
     internal static class Program
     {

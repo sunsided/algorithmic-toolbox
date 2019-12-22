@@ -1,7 +1,7 @@
 using System;
 using System.Diagnostics;
 
-namespace project
+namespace Week3.MoneyChange
 {
     internal static class Program
     {
@@ -13,7 +13,7 @@ namespace project
             var solution = FastSolution(n);
             Console.WriteLine(solution);
         }
-        
+
         private static int FastSolution(int n)
         {
             var coins = 0;
@@ -22,13 +22,13 @@ namespace project
                 n -= 10;
                 ++coins;
             }
-            
+
             while (n >= 5)
             {
                 n -= 5;
                 ++coins;
             }
-            
+
             while (n >= 1)
             {
                 --n;

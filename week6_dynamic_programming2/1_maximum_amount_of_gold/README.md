@@ -25,7 +25,7 @@ of gold. The next line contains _n_ integers _w(0), w(1), ..., w(n−1)_ definin
 ##### Constraints
  
 - 1 ≤ W ≤ 10^4
-- 1 ≤ n ≤ 300; 
+- 1 ≤ n ≤ 300
 - 0 ≤ w(0), ..., w(n−1) ≤ 10^5
 
 ##### Output Format

@@ -88,6 +88,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Week 5.5 - Longest Common S
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Week 6.1 - Maximum Amount of Gold", "week6_dynamic_programming2\1_maximum_amount_of_gold\Week 6.1 - Maximum Amount of Gold.csproj", "{D1AA0B5C-6D80-441F-B692-B5F9F24EE993}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Week 6.2 - Partitioning Souvenirs", "week6_dynamic_programming2\2_partitioning_souvenirs\Week 6.2 - Partitioning Souvenirs.csproj", "{4A3B662B-A1AD-4255-9227-A65B0D8E2385}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -124,6 +126,7 @@ Global
 		{D1613083-E923-4410-A95D-710ACD59EBFA} = {77E8B0A0-EEB1-4C1A-A159-E1D3B03D6188}
 		{5C70C662-ADB2-46E6-83BC-39990B51D90E} = {77E8B0A0-EEB1-4C1A-A159-E1D3B03D6188}
 		{D1AA0B5C-6D80-441F-B692-B5F9F24EE993} = {F2C62A78-A018-4F6E-876F-4483394C26FA}
+		{4A3B662B-A1AD-4255-9227-A65B0D8E2385} = {F2C62A78-A018-4F6E-876F-4483394C26FA}
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{D8CD5AE2-C342-4AF7-B644-1CD800544E13}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -300,5 +303,11 @@ Global
 		{D1AA0B5C-6D80-441F-B692-B5F9F24EE993}.Release|Any CPU.Build.0 = Release|Any CPU
 		{D1AA0B5C-6D80-441F-B692-B5F9F24EE993}.Testing|Any CPU.ActiveCfg = Testing|Any CPU
 		{D1AA0B5C-6D80-441F-B692-B5F9F24EE993}.Testing|Any CPU.Build.0 = Testing|Any CPU
+		{4A3B662B-A1AD-4255-9227-A65B0D8E2385}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4A3B662B-A1AD-4255-9227-A65B0D8E2385}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4A3B662B-A1AD-4255-9227-A65B0D8E2385}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4A3B662B-A1AD-4255-9227-A65B0D8E2385}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4A3B662B-A1AD-4255-9227-A65B0D8E2385}.Testing|Any CPU.ActiveCfg = Testing|Any CPU
+		{4A3B662B-A1AD-4255-9227-A65B0D8E2385}.Testing|Any CPU.Build.0 = Testing|Any CPU
 	EndGlobalSection
 EndGlobal

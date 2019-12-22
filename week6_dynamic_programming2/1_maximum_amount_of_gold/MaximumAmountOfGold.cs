@@ -20,7 +20,37 @@ namespace Week5.LongestCommonSubsequenceOfThree
 
         public static long Solution(int maxWeight, List<int> itemWeights)
         {
-            return 0;
+            var values = InitializeSelectionMatrix(maxWeight, itemWeights);
+
+            for (var i = 1; i <= itemWeights.Count; ++i)
+            {
+                // Since we're talking about gold bars, value/weight ratio is 1.
+                var currentItemWeight = itemWeights[i - 1];
+                var currentItemValue = currentItemWeight;
+
+                for (var w = 1; w <= maxWeight; ++w)
+                {
+                    // Initialize the current solution with the previous best value.
+                    values[w, i] = values[w, i - 1];
+
+                    // Check whether we can improve on the value.
+                    if (currentItemWeight <= w)
+                    {
+                        var newValue = values[w - currentItemWeight, i - 1] + currentItemValue;
+                        values[w, i] = Math.Max(newValue, values[w, i]);
+                    }
+                }
+            }
+
+            // TODO: Backtrack by seeing whether having _added_ the item or not having it at all improved/kept the value.
+            return values[maxWeight, itemWeights.Count];
+        }
+
+        private static int[,] InitializeSelectionMatrix(int knapsackSize, ICollection weights)
+        {
+            // Note that we need the first row and column to be initialized with zero.
+            // Intuitively, a knapsack with zero size has zero value, as has a knapsack with zero items.
+            return new int[knapsackSize + 1, weights.Count + 1];
         }
 
         private static void RunMain()

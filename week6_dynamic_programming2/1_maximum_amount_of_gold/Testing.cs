@@ -19,6 +19,9 @@ namespace Week5.LongestCommonSubsequenceOfThree
         {
             // The solution here is (1, 8), which is the only combination whose sum is smaller than 10.
             yield return GenerateTestCase(9, 10, In(1, 4, 8));
+
+            // Automated test case #3/14
+            yield return GenerateTestCase(10, 10, In(3, 5, 3, 3, 5));
         }
 
         private static Test GenerateTestCase(int expectedValue, int maximumWeight, List<int> itemWeights)

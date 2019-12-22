@@ -34,6 +34,8 @@ Output the maximum weight of gold that fits into a knapsack of capacity _W_.
 
 ### Sample
 
+##### Sample 1
+
 Input:
 
 ```text
@@ -48,3 +50,18 @@ Output:
 ```
 
 Here, the sum of the weights of the first and the last bar is equal to 9.
+
+##### Sample 2
+
+Input:
+
+```text
+10 5
+3 5 3 3 5
+```
+
+Output:
+
+```text
+10
+```

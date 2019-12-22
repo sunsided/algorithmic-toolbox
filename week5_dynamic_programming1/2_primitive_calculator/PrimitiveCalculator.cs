@@ -17,9 +17,7 @@ namespace Week5.PrimitiveCalculator
         private static void Main(string[] args)
         {
 #if TESTING
-            Debug.Assert(string.Join(" ", Solution(1)) == "1", "1");
-            Debug.Assert(string.Join(" ", Solution(5)) == "1 2 4 5", "1 3 4 5");
-            Debug.Assert(string.Join(" ", Solution(96234)) == "1 3 9 10 11 22 66 198 594 1782 5346 16038 16039 32078 96234", "1 3 9 10 11 22 66 198 594 1782 5346 16038 16039 32078 96234");
+            Testing.Run();
 #else
             var amount = ParseInputs();
             var solution = Solution(amount);
@@ -42,7 +40,7 @@ namespace Week5.PrimitiveCalculator
             public bool Valid => Count > 0;
         }
 
-        private static int[] Solution(int goalNumber)
+        public static int[] Solution(int goalNumber)
         {
             if (goalNumber == 0) return new int[0];
 

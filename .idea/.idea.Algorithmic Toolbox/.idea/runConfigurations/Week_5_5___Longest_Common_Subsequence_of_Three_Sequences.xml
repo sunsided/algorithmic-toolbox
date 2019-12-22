@@ -1,6 +1,6 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="Week 5.5 - Longest Common Subsequence of Three Sequences" type="DotNetProject" factoryName=".NET Project" folderName="Week 5">
-    <option name="EXE_PATH" value="$PROJECT_DIR$/week5_dynamic_programming1/5_longest_common_subsequence_of_three_sequences/bin/Testing/netcoreapp2.2/Week 5.5 - Longest Common Subsequence of Three Sequnces.dll" />
+    <option name="EXE_PATH" value="$PROJECT_DIR$/week5_dynamic_programming1/5_longest_common_subsequence_of_three_sequences/bin/Testing/netcoreapp2.2/Week 5.5 - Longest Common Subsequence of Three Sequences.dll" />
     <option name="PROGRAM_PARAMETERS" value="" />
     <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/week5_dynamic_programming1/5_longest_common_subsequence_of_three_sequences/bin/Testing/netcoreapp2.2" />
     <option name="PASS_PARENT_ENVS" value="1" />

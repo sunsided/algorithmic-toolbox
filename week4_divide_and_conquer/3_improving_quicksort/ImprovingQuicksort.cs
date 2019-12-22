@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 
-namespace ImprovingQuicksort
+namespace Week4.ImprovingQuicksort
 {
     internal static class Program
     {

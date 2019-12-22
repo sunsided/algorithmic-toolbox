@@ -1,7 +1,7 @@
 using System;
 using System.Diagnostics;
 
-namespace project
+namespace Week2.LeastCommonMultiple
 {
     internal static class Program
     {
@@ -17,7 +17,7 @@ namespace project
         private static long FastSolution(long a, long b)
         {
             OrderBigSmall(ref a, ref b);
-            
+
             var gcd = GreatestCommonDivisor(a, b);
             return (a / gcd) * b;
         }
@@ -32,7 +32,7 @@ namespace project
                 var b_ = b;
                 a = b_;
                 b = a_ - temp * b_;
-                
+
                 if (a == b || b == 1)
                 {
                     return b;
@@ -59,7 +59,7 @@ namespace project
             // Read number of inputs
             var input = Console.ReadLine();
             Debug.Assert(input != null, "input != null");
-            var values = input.Split(); 
+            var values = input.Split();
             a = int.Parse(values[0]);
             b = int.Parse(values[1]);
         }

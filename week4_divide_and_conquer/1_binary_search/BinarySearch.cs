@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 
-namespace Project
+namespace Week4.BinarySearch
 {
     internal static class Program
     {
@@ -68,7 +68,7 @@ namespace Project
             {
                 values[i] = int.Parse(inputs[i + 1]);
             }
-            
+
             // values to search for
             input = Console.ReadLine();
             Debug.Assert(input != null, "input != null");

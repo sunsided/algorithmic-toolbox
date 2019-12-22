@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 
-namespace Project
+namespace Week3.CollectingSignatures
 {
     internal static class Program
     {
@@ -13,11 +13,11 @@ namespace Project
             TimeRange[] times;
             ParseInputs(out times);
             var solution = FastSolution(times);
-            
+
             Console.WriteLine(solution.Count);
             Console.WriteLine(string.Join(" ", solution));
         }
-        
+
         private static List<long> FastSolution(IReadOnlyList<TimeRange> inputTimes)
         {
             var times = inputTimes
@@ -28,7 +28,7 @@ namespace Project
 
             // Sanity check.
             if (times.Count == 0) return timePoints;
-            
+
             // If the list is now empty, this means that visiting this
             // person is the last action we have to take.
             if (times.Count == 1)
@@ -60,7 +60,7 @@ namespace Project
                     times.RemoveAt(0);
                     constraint = newConstraint;
                 }
-                
+
                 // We now arbitrarily select the start time.
                 timePoints.Add(constraint.From);
             }
@@ -71,10 +71,10 @@ namespace Project
         private static bool IsOverlapping(ref TimeRange constraint, ref TimeRange element, out TimeRange overlap)
         {
             overlap = constraint;
-            
+
             // If element is entirely on the left, mismatch.
             if (element.To < constraint.From) return false;
-            
+
             // If element is entirely on the right, mismatch.
             if (element.From > constraint.To) return false;
 
@@ -105,17 +105,17 @@ namespace Project
             var input = Console.ReadLine();
             Debug.Assert(input != null, "input != null");
             var n = int.Parse(input.Trim());
-            
+
             times = new TimeRange[n];
             for (var i = 0; i < n; ++i)
             {
                 input = Console.ReadLine();
                 Debug.Assert(input != null, "input != null");
                 var values = input.Split();
-                
+
                 var @from =  int.Parse(values[0]);
                 var to =  int.Parse(values[1]);
-                times[i] = new TimeRange(@from, to); 
+                times[i] = new TimeRange(@from, to);
             }
         }
 

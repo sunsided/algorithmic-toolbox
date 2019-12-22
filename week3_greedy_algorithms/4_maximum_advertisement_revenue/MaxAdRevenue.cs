@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 
-namespace Project
+namespace Week3.MaximumAdvertisementRevenue
 {
     internal static class Program
     {
@@ -15,14 +15,14 @@ namespace Project
             var solution = FastSolution(profitPerClick, clicksPerDay);
             Console.WriteLine(solution);
         }
-        
+
         private static long FastSolution(IReadOnlyList<int> profitPerClick, IReadOnlyList<int> clicksPerDay)
         {
             Debug.Assert(profitPerClick.Count == clicksPerDay.Count, "profitPerClick.Count == clicksPerDay.Count");
 
             return profitPerClick
                 .OrderByDescending(x => x)
-                .Zip(clicksPerDay.OrderByDescending(x => x), 
+                .Zip(clicksPerDay.OrderByDescending(x => x),
                     (a, b) => (long)a * b)
                 .Sum();
         }
@@ -31,7 +31,7 @@ namespace Project
             var input = Console.ReadLine();
             Debug.Assert(input != null, "input != null");
             var n = int.Parse(input.Trim());
-            
+
             input = Console.ReadLine();
             Debug.Assert(input != null, "input != null");
             var values = input.Split();
@@ -40,7 +40,7 @@ namespace Project
             {
                 profitPerClick[i] = int.Parse(values[i]);
             }
-            
+
             input = Console.ReadLine();
             Debug.Assert(input != null, "input != null");
             values = input.Split();

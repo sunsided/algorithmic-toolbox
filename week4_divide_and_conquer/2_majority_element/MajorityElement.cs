@@ -2,7 +2,7 @@ using System;
 using System.Diagnostics;
 using System.Linq;
 
-namespace Project
+namespace Week4.MajorityElement
 {
     internal static class Program
     {
@@ -45,7 +45,7 @@ namespace Project
 
 #if WTF
 
-        private static readonly int NoElement = -1; 
+        private static readonly int NoElement = -1;
 
         // ReSharper disable once UnusedParameter.Local
         private static void Main(string[] args)
@@ -103,7 +103,7 @@ namespace Project
             for (var i = start; i <= end && r <= end; ++i)
             {
                 var value = values[i];
-                if (value > values[r]) 
+                if (value > values[r])
                 {
                     Swap(values, i, r);
                     ++r;
@@ -111,7 +111,7 @@ namespace Project
             }
 
             // Find the majority candidate.
-            // TODO: Ideally, we can do this as part of the merge sort. 
+            // TODO: Ideally, we can do this as part of the merge sort.
             var majorityCandidate = values[start];
             var majorityCount = 1;
             var midpoint = length / 2;
@@ -150,12 +150,12 @@ namespace Project
             var input = Console.ReadLine();
             Debug.Assert(input != null, "input != null");
             var n = int.Parse(input);
-            
+
             // values to search in
             input = Console.ReadLine();
             Debug.Assert(input != null, "input != null");
             var inputs = input.Split();
-            
+
             values = new int[n];
             for (var i = 0; i < n; ++i)
             {

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 
-namespace Project
+namespace Week3.MaximumNumberOfPrizes
 {
     internal static class Program
     {
@@ -16,12 +16,12 @@ namespace Project
             Console.WriteLine(solution.Count);
             Console.WriteLine(string.Join(" ", solution));
         }
-        
+
         private static List<long> FastSolution(long candies)
         {
             var prices = new List<long>();
             if (candies == 0) return prices;
-            
+
             var minAmount = 0L;
             var remaining = candies;
 
@@ -29,7 +29,7 @@ namespace Project
             {
                 // We increase the minimum amount as slowly as possible.
                 ++minAmount;
-                
+
                 // If this move results in a remaining set being exactly the same size (or, technically
                 // smaller as well), the next price would be the same as (or less than) the current spot.
                 // If this happens, we terminate with the remaining sum (which is larger than the previous price).
@@ -37,12 +37,12 @@ namespace Project
                 {
                     prices.Add(remaining);
                     break;
-                } 
-                
+                }
+
                 prices.Add(minAmount);
                 remaining -= minAmount;
             }
-            
+
             return prices;
         }
 

@@ -3,14 +3,14 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 
-namespace PointsAndSegments
+namespace Week4.OrganizingALottery
 {
     internal static class Program
     {
 #if TESTING
         public static readonly Random Random = new Random(0);
 #endif
-        
+
         // ReSharper disable once UnusedParameter.Local
         private static void Main(string[] args)
         {
@@ -32,14 +32,14 @@ namespace PointsAndSegments
             const int max = 1000; // 100000000;
             const int s = 1000; // 10000;
             const int p = 100000; // 100000;
-            
+
             var starts = new List<int>(s);
             var ends = new List<int>(s);
             for (var i = 0; i < s; ++i)
             {
                 GenerateSegment(min, max, starts, ends);
             }
-            
+
             var points = Enumerable.Range(0, p).Select(x => GeneratePoint(min, max)).ToArray();
 #else
             int[] points;
@@ -50,17 +50,17 @@ namespace PointsAndSegments
 
 #if TESTING
             Console.WriteLine("Running slow solution ...");
-            
+
             var naiveWatch = Stopwatch.StartNew();
             var naiveSolution = NaiveSolution(starts, ends, points);
             Console.WriteLine("Slow solution took {0}", naiveWatch.Elapsed);
-            
+
             Console.WriteLine("Running fast solution ...");
 #endif
-            
-            var stopwatch = Stopwatch.StartNew(); 
+
+            var stopwatch = Stopwatch.StartNew();
             var solution = FastSolution(starts, ends, points);
-            
+
 #if TESTING
             Console.WriteLine("Fast solution took {0}", stopwatch.Elapsed);
             Debug.Assert(solution.Length == naiveSolution.Length, "solution.Length == naiveSolution.Length");
@@ -85,11 +85,11 @@ namespace PointsAndSegments
             starts.Add(start);
             ends.Add(end);
         }
-        
+
         private static int GeneratePoint(int min, int max) => Random.Next(min, max + 1);
 
 #endif
-        
+
         private static int[] NaiveSolution(List<int> starts, List<int> ends, int[] points)
         {
             var cnt = new int[points.Length];
@@ -115,13 +115,13 @@ namespace PointsAndSegments
 
             var startTime = deltas[0].Time;
             var endTime = deltas[deltas.Count - 1].Time;
-            
+
             var results = new int[points.Length];
             for (var pi = 0; pi < points.Length; ++pi)
             {
                 var pt = points[pi];
                 if (pt < startTime || pt > endTime) continue;
-                
+
                 var idx = deltas.BinarySearch(new DeltaPoint(pt, 0), PointTimeComparer.Default);
                 if (idx >= 0)
                 {
@@ -134,7 +134,7 @@ namespace PointsAndSegments
                     results[pi] = deltas[idx - 1].Value;
                 }
             }
-            
+
             return results;
         }
 
@@ -170,7 +170,7 @@ namespace PointsAndSegments
                     // Pick the right values.
                     var deltaTime = -1;
                     var deltaValue = 0;
-                    
+
                     // Since the end time is still ON the line segment,
                     // the value actually only decreases AFTER the end.
                     if (starts[startsCount - 1] <= (ends[endsCount - 1] + 1))
@@ -228,7 +228,7 @@ namespace PointsAndSegments
 
             return deltas;
         }
-        
+
         [DebuggerDisplay("{Value} at {Time}")]
         private struct DeltaPoint
         {
@@ -240,25 +240,25 @@ namespace PointsAndSegments
                 Time = time;
                 Value = value;
             }
-            
+
             public static DeltaPoint operator +(DeltaPoint lhs, int value) => new DeltaPoint(lhs.Time, lhs.Value + value);
             public static DeltaPoint operator -(DeltaPoint lhs, int value) => new DeltaPoint(lhs.Time, lhs.Value - value);
         }
-        
+
         private sealed class PointTimeComparer : IComparer<DeltaPoint>
         {
             public static readonly PointTimeComparer Default = new PointTimeComparer();
-            
+
             public int Compare(DeltaPoint x, DeltaPoint y) => x.Time.CompareTo(y.Time);
         }
-        
+
         private sealed class ReverseComparer : IComparer<int>
         {
             public static readonly ReverseComparer Default = new ReverseComparer();
 
             public int Compare(int x, int y) => y.CompareTo(x);
         }
-        
+
         private static void ParseInputs(out List<int> starts, out List<int> ends, out int[] points)
         {
             // Read segment and point count
@@ -275,7 +275,7 @@ namespace PointsAndSegments
                 starts.Add(segment[0]);
                 ends.Add(segment[1]);
             }
-            
+
             // Read all the points
             points = ReadIntegers(p);
         }
@@ -287,7 +287,7 @@ namespace PointsAndSegments
             var inputs = input.Split();
 
             Debug.Assert(n <= 0 || n == inputs.Length, "n <= 0 || n == inputs.Length");
-            
+
             var values = new int[inputs.Length];
             for (var i = 0; i < n; ++i)
             {

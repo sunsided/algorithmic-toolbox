@@ -1,7 +1,7 @@
 using System;
 using System.Diagnostics;
 
-namespace project
+namespace Week2.GreatestCommonDivisor
 {
     internal static class Program
     {
@@ -17,7 +17,7 @@ namespace project
             {
                 var a = random.Next() % (maxInputs - minInputs + 1) + minInputs;
                 var b = random.Next() % (maxInputs - minInputs + 1) + minInputs;
-                
+
                 // Compare solutions
                 try
                 {
@@ -51,7 +51,7 @@ namespace project
         }
 
 #if TESTING
-        
+
         private static long NaiveSolution(long a, long b)
         {
             if (a == b) return a;
@@ -80,7 +80,7 @@ namespace project
                 var b_ = b;
                 a = b_;
                 b = a_ - temp * b_;
-                
+
                 if (a == b || b == 1)
                 {
                     return b;
@@ -107,7 +107,7 @@ namespace project
             // Read number of inputs
             var input = Console.ReadLine();
             Debug.Assert(input != null, "input != null");
-            var values = input.Split(); 
+            var values = input.Split();
             a = int.Parse(values[0]);
             b = int.Parse(values[1]);
         }

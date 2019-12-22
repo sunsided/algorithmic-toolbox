@@ -1,7 +1,7 @@
 using System;
 using System.Diagnostics;
 
-namespace project
+namespace Week2.LastDigitOfSumOfSquaresOfFibonacciNumbers
 {
     internal static class Program
     {
@@ -13,7 +13,7 @@ namespace project
             var solution = FastSolution(n);
             Console.WriteLine(solution);
         }
-        
+
         private static int FastSolution(long n)
         {
             // We make use of Sum F(1..n)^2 = F(n+1) * F(n)
@@ -24,7 +24,7 @@ namespace project
             // F(n) = F(n+2) - F(1)
             var a = FastFibonacciRecursiveModulo(remainderN, 10);
             var b = FastFibonacciRecursiveModulo(remainderN + 1, 10);
-            
+
             // Add a small amount of hacking ... to counter negative values.
             var result = (b * a) % 10;
             if (result < 0) result = 10 + result;
@@ -37,12 +37,12 @@ namespace project
             // We additionally take mod 10 since we only need the last digit anyway.
             Debug.Assert(modulo % 10 == 0, "modulo % 10 == 0");
             if (n <= 1) return (int)n;
-            
+
             var even = (n & 1) == 0;
             if (even)
             {
                 var k = n / 2;
-                
+
                 var fibKm1 = FastFibonacciRecursiveModulo(k - 1, modulo);
                 var fibK = FastFibonacciRecursiveModulo(k, modulo);
                 return (2 * fibKm1 + fibK) * fibK % modulo;

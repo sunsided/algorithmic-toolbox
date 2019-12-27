@@ -42,7 +42,7 @@ namespace Week5.LongestCommonSubsequenceOfThree
                 }
             }
 
-            // TODO: Backtrack by seeing whether having _added_ the item or not having it at all improved/kept the value.
+            // TODO: Backtrack by seeing whether having _added_ the item improved - or not having it at all kept - the value.
             return values[maxWeight, itemWeights.Count];
         }
 

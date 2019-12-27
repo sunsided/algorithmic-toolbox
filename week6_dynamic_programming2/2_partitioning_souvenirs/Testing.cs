@@ -18,6 +18,12 @@ namespace Week5.LongestCommonSubsequenceOfThree
 
         private static IEnumerable<Test> GenerateTestCases()
         {
+            // Groups are: (7, 3) = (5, 4, 1) = (8, 2), all of value 10.
+            yield return GenerateTestCase(true, In(7, 2, 3, 1, 5, 4, 8));
+
+            // Groups are: (7, 3) = (5, 4, 1) = (8, 2), all of value 10.
+            yield return GenerateTestCase(true, In(7, 3, 2, 1, 5, 4, 8));
+
             // From a forum post.
             yield return GenerateTestCase(true, In(1, 1, 1));
 
@@ -35,9 +41,6 @@ namespace Week5.LongestCommonSubsequenceOfThree
 
             // Not divisible by 3.
             yield return GenerateTestCase(false, In(2, 1, 5, 5, 6));
-
-            // Groups are: (7, 3) = (5, 4, 1) = (8, 2), all of value 10.
-            yield return GenerateTestCase(true, In(7, 3, 2, 1, 5, 4, 8));
 
             // Groups are: (34 + 67 + 17) = (23 + 59 + 1 + 17 + 18) = (59 + 2 + 57), all of value 118.
             yield return GenerateTestCase(true, In(17, 59, 34, 57, 17, 23, 67, 1, 18, 2, 59));

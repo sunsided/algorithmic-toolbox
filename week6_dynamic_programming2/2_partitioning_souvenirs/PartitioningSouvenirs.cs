@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -26,66 +25,81 @@ namespace Week5.LongestCommonSubsequenceOfThree
             // In order to evenly split, the sum of values must be integer divisible by the number of people.
             var sumOfItems = itemWeights.Sum();
             if (sumOfItems % 3 != 0) return false;
+            var partitionSize = sumOfItems / 3;
 
-            var maxWeight = sumOfItems / 3;
-            var values = InitializeSelectionMatrix(maxWeight, itemWeights);
+            var lookup = new Dictionary<Tuple<int, int, int, int>, bool>();
 
-            for (var i = 1; i <= itemWeights.Count; ++i)
-            {
-                // Since we're talking about gold bars, value/weight ratio is 1.
-                var currentItemWeight = itemWeights[i - 1];
-                var currentItemValue = currentItemWeight;
-
-                for (var w = 1; w <= maxWeight; ++w)
-                {
-                    // Initialize the current solution with the previous best value.
-                    values[w, i] = values[w, i - 1];
-
-                    // Check whether we can improve on the value.
-                    if (currentItemWeight <= w)
-                    {
-                        var newValueA = values[w - currentItemWeight, i - 1].ValueA + currentItemValue;
-                        var newValueB = values[w - currentItemWeight, i - 1].ValueB + currentItemValue;
-
-                        // values[w, i] = Math.Max(newValue, values[w, i]);
-                        var previous = values[w, i];
-                        if (previous.ValueA < newValueA)
-                        {
-                            values[w, i] = new Bipartition(currentItemValue, previous);
-                        }
-                        else if (previous.ValueB < newValueB)
-                        {
-                            values[w, i] = new Bipartition(previous, currentItemValue);
-                        }
-                    }
-
-                    // Early exit
-                    if (values[w, i].ValueA == maxWeight && values[w, i].ValueB == maxWeight) return true;
-                }
-            }
-
-            // Since the sum is divisible by three, if we find two partitions of the same size,
-            // the remaining one must be valid, too.
-            var resultValue = values[maxWeight, itemWeights.Count];
-            return resultValue.ValueA == maxWeight && resultValue.ValueB == maxWeight;
+            return SubsetSumExists(itemWeights, itemWeights.Count - 1,
+                partitionSize,
+                partitionSize,
+                partitionSize,
+                lookup);
         }
 
-        private static Bipartition[,] InitializeSelectionMatrix(int knapsackSize, ICollection weights)
+        // Implemented from recursive solution at https://www.techiedelight.com/3-partition-problem/
+        public static bool SubsetSumExists(List<int> weights, int n,
+            int partitionSizeA,
+            int partitionSizeB,
+            int partitionSizeC,
+            Dictionary<Tuple<int, int, int, int>, bool> lookup)
         {
-            // Note that we need the first row and column to be initialized with zero.
-            // Intuitively, a knapsack with zero size has zero value, as has a knapsack with zero items.
-            var list = new Bipartition[knapsackSize + 1, weights.Count + 1];
-            for (var s = 0; s < knapsackSize + 1; ++s)
+            var lookupKey = Tuple.Create(partitionSizeA, partitionSizeB, partitionSizeC, n);
+            bool solution;
+            if (lookup.TryGetValue(lookupKey, out solution))
             {
-                for (var w = 0; w < weights.Count + 1; ++w)
-                {
-                    list[s, w] = new Bipartition(
-                        new List<int>(),
-                        new List<int>());
-                }
+                return solution;
             }
 
-            return list;
+            // return true if subset is found
+            if (partitionSizeA == 0 && partitionSizeB == 0 && partitionSizeC == 0)
+            {
+                return true;
+            }
+
+            // base case: no items left
+            if (n < 0)
+            {
+                return false;
+            }
+
+            // Case 1. current item becomes part of first subset
+            var includedInA = false;
+            if (partitionSizeA - weights[n] >= 0)
+            {
+                includedInA = SubsetSumExists(weights, n - 1,
+                    partitionSizeA - weights[n],
+                    partitionSizeB,
+                    partitionSizeC,
+                    lookup);
+            }
+
+            // Case 2. current item becomes part of second subset
+            var includedInB = false;
+            if (!includedInA && partitionSizeB - weights[n] >= 0)
+            {
+                includedInB = SubsetSumExists(weights, n - 1,
+                    partitionSizeA,
+                    partitionSizeB - weights[n],
+                    partitionSizeC,
+                    lookup);
+            }
+
+            // Case 3. current item becomes part of third subset
+            var includedInC = false;
+            if (!includedInA && !includedInB && partitionSizeC - weights[n] >= 0)
+            {
+                includedInC = SubsetSumExists(weights, n - 1,
+                    partitionSizeA,
+                    partitionSizeB,
+                    partitionSizeC - weights[n],
+                    lookup);
+            }
+
+            // return true if we get solution
+            solution = includedInA || includedInB || includedInC;
+            lookup.Add(lookupKey, solution);
+
+            return solution;
         }
 
         private static void RunMain()
@@ -102,34 +116,6 @@ namespace Week5.LongestCommonSubsequenceOfThree
             var expectedCount = int.Parse(Console.ReadLine());
             values = Console.ReadLine().Split().Select(int.Parse).ToList();
             Debug.Assert(values.Count == expectedCount, "weights.Count == expectedCount");
-        }
-
-        [DebuggerDisplay("({ValueA}, {ValueB})")]
-        private struct Bipartition
-        {
-            public Bipartition(List<int> listA, List<int> listB)
-            {
-                ListA = new List<int>(listA);
-                ListB = new List<int>(listB);
-            }
-
-            public Bipartition(int valueA, Bipartition previous)
-            {
-                ListA = new List<int>(previous.ListA) {valueA};
-                ListB = new List<int>(previous.ListB);
-            }
-
-            public Bipartition(Bipartition previous, int valueB)
-            {
-                ListA = new List<int>(previous.ListA);
-                ListB = new List<int>(previous.ListB) {valueB};
-            }
-
-            public int ValueA => ListA.Sum();
-            public int ValueB => ListB.Sum();
-
-            public List<int> ListA { get; }
-            public List<int> ListB { get; }
         }
     }
 }

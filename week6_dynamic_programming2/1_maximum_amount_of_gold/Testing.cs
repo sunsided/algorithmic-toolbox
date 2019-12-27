@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 
-namespace Week5.LongestCommonSubsequenceOfThree
+namespace Week6.LongestCommonSubsequenceOfThree
 {
     internal static class Testing
     {

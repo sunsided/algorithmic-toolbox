@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 
-namespace Week5.LongestCommonSubsequenceOfThree
+namespace Week6.LongestCommonSubsequenceOfThree
 {
     internal static class Program
     {

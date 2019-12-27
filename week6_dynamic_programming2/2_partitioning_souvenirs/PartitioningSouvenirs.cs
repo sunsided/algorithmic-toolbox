@@ -4,7 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using PartitionSizes = System.Tuple<int, int, int>;
 
-namespace Week5.LongestCommonSubsequenceOfThree
+namespace Week6.LongestCommonSubsequenceOfThree
 {
     internal static class Program
     {

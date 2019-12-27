@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 
-namespace Week5.LongestCommonSubsequenceOfThree
+namespace Week6.LongestCommonSubsequenceOfThree
 {
     internal static class Testing
     {
@@ -18,12 +18,6 @@ namespace Week5.LongestCommonSubsequenceOfThree
 
         private static IEnumerable<Test> GenerateTestCases()
         {
-            // Groups are: (7, 3) = (5, 4, 1) = (8, 2), all of value 10.
-            yield return GenerateTestCase(true, In(7, 2, 3, 1, 5, 4, 8));
-
-            // Groups are: (7, 3) = (5, 4, 1) = (8, 2), all of value 10.
-            yield return GenerateTestCase(true, In(7, 3, 2, 1, 5, 4, 8));
-
             // From a forum post.
             yield return GenerateTestCase(true, In(1, 1, 1));
 
@@ -32,6 +26,12 @@ namespace Week5.LongestCommonSubsequenceOfThree
 
             // The sum of the items is divisible by 3, but no three groups of identical value can be created.
             yield return GenerateTestCase(false, In(3, 3, 3, 3));
+
+            // Groups are: (7, 3) = (5, 4, 1) = (8, 2), all of value 10.
+            yield return GenerateTestCase(true, In(7, 2, 3, 1, 5, 4, 8));
+
+            // Groups are: (7, 3) = (5, 4, 1) = (8, 2), all of value 10.
+            yield return GenerateTestCase(true, In(7, 3, 2, 1, 5, 4, 8));
 
             // From a forum post.
             yield return GenerateTestCase(false, In(3, 3, 4, 5, 6));

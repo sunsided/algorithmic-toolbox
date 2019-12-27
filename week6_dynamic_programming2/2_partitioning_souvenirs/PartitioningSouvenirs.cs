@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using PartitionSizes = System.Tuple<int, int, int>;
 
 namespace Week5.LongestCommonSubsequenceOfThree
 {
@@ -27,23 +28,19 @@ namespace Week5.LongestCommonSubsequenceOfThree
             if (sumOfItems % 3 != 0) return false;
             var partitionSize = sumOfItems / 3;
 
-            var lookup = new Dictionary<Tuple<int, int, int, int>, bool>();
+            var lookup = new Dictionary<Tuple<PartitionSizes, int>, bool>();
 
             return SubsetSumExists(itemWeights, itemWeights.Count - 1,
-                partitionSize,
-                partitionSize,
-                partitionSize,
+                Tuple.Create(partitionSize, partitionSize, partitionSize),
                 lookup);
         }
 
         // Implemented from recursive solution at https://www.techiedelight.com/3-partition-problem/
         public static bool SubsetSumExists(List<int> weights, int n,
-            int partitionSizeA,
-            int partitionSizeB,
-            int partitionSizeC,
-            Dictionary<Tuple<int, int, int, int>, bool> lookup)
+            Tuple<int, int, int> partitionSizes,
+            Dictionary<Tuple<PartitionSizes, int>, bool> lookup)
         {
-            var lookupKey = Tuple.Create(partitionSizeA, partitionSizeB, partitionSizeC, n);
+            var lookupKey = Tuple.Create(partitionSizes, n);
             bool solution;
             if (lookup.TryGetValue(lookupKey, out solution))
             {
@@ -51,7 +48,7 @@ namespace Week5.LongestCommonSubsequenceOfThree
             }
 
             // return true if subset is found
-            if (partitionSizeA == 0 && partitionSizeB == 0 && partitionSizeC == 0)
+            if (partitionSizes.Item1 == 0 && partitionSizes.Item2 == 0 && partitionSizes.Item3 == 0)
             {
                 return true;
             }
@@ -63,42 +60,39 @@ namespace Week5.LongestCommonSubsequenceOfThree
             }
 
             // Case 1. current item becomes part of first subset
-            var includedInA = false;
-            if (partitionSizeA - weights[n] >= 0)
+            if (partitionSizes.Item1 - weights[n] >= 0)
             {
-                includedInA = SubsetSumExists(weights, n - 1,
-                    partitionSizeA - weights[n],
-                    partitionSizeB,
-                    partitionSizeC,
-                    lookup);
+                solution = SubsetSumExists(weights, n - 1,
+                    Tuple.Create(
+                        partitionSizes.Item1 - weights[n],
+                        partitionSizes.Item2,
+                        partitionSizes.Item3),
+                lookup);
             }
 
             // Case 2. current item becomes part of second subset
-            var includedInB = false;
-            if (!includedInA && partitionSizeB - weights[n] >= 0)
+            if (!solution && partitionSizes.Item2 - weights[n] >= 0)
             {
-                includedInB = SubsetSumExists(weights, n - 1,
-                    partitionSizeA,
-                    partitionSizeB - weights[n],
-                    partitionSizeC,
+                solution = SubsetSumExists(weights, n - 1,
+                    Tuple.Create(
+                        partitionSizes.Item1,
+                        partitionSizes.Item2 - weights[n],
+                        partitionSizes.Item3),
                     lookup);
             }
 
             // Case 3. current item becomes part of third subset
-            var includedInC = false;
-            if (!includedInA && !includedInB && partitionSizeC - weights[n] >= 0)
+            if (!solution && partitionSizes.Item3 - weights[n] >= 0)
             {
-                includedInC = SubsetSumExists(weights, n - 1,
-                    partitionSizeA,
-                    partitionSizeB,
-                    partitionSizeC - weights[n],
+                solution = SubsetSumExists(weights, n - 1,
+                    Tuple.Create(
+                        partitionSizes.Item1,
+                        partitionSizes.Item2,
+                        partitionSizes.Item3 - weights[n]),
                     lookup);
             }
 
-            // return true if we get solution
-            solution = includedInA || includedInB || includedInC;
             lookup.Add(lookupKey, solution);
-
             return solution;
         }
 
